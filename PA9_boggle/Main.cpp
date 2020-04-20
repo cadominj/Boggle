@@ -6,6 +6,8 @@
 Description: A simplistic game of boggle using SFML graphics library.
 *****************************************************************************/
 
+#include <SFML/Graphics.hpp>
+
 /*
   The rules of boggle:
   - 4 x 4 square of pseudo randomized letters
@@ -51,9 +53,13 @@ Description: A simplistic game of boggle using SFML graphics library.
   QuITE  (2 points)
   QuERY  (2 points)
   PINE   (1 point)
+  VINE   (1 point)
   BITE   (1 point)
   BOYS   (1 point)
+  VOWS   (1 point)
+  VOW    (1 point)
   BOY    (1 point)
+  BOW    (1 point)
   BIT    (1 point)
   NET    (1 point)
   TIN    (1 point)
@@ -61,12 +67,29 @@ Description: A simplistic game of boggle using SFML graphics library.
   PEN    (1 point)
   SOY    (1 point)
   PAN    (1 point)
+  APE    (1 point)
   ... (and so on)
 */
 
-
+// currently just a test that SFML is statically linking and operating smoothly
 int main()
 {
+  sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
+  sf::CircleShape shape(100.f);
+  shape.setFillColor(sf::Color::Green);
 
+  while (window.isOpen())
+  {
+    sf::Event event;
+    while (window.pollEvent(event))
+    {
+      if (event.type == sf::Event::Closed)
+        window.close();
+    }
+
+    window.clear();
+    window.draw(shape);
+    window.display();
+  }
   return 0;
 }
