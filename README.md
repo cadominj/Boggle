@@ -9,64 +9,71 @@ Description: A simplistic game of Boggle using SFML graphics library.
 - Open the project solution (PA9_boggle.sln) with the Visual Studio IDE (ex: Visual Studio Community 2019)
 - Choose a Build: Debug or Release
 - Press F7 or click <i>Build&rarr;Build Solution</i> from the menu bar.
-- If you encounter linker errors that lead you to suspect that the graphics library is not linking, ensure that SFML is linking in at least 1 of 4 ways (static debug, static release, dynamic debug, dyanmic release). Our project is set up with static linking for both debug and release modes, but could be switched to dynamic with relative ease. Inside the project properties:
-  - For <i>Configuration: All Configurations</i>
-    - Under <i>Configuration Properties&rarr;C/C++&rarr;General&rarr;Additional Include Directories</i> ensure that <i><b>./SFML/include</b></i> is listed.
-    - Under <i>Configuration Properties&rarr;Linker&rarr;General&rarr;Additional Library Directories</i> ensure that <i><b>./SFML/lib</b></i> is listed.
-  - For a <b>Static Debug</b> Build:
-    - For <i>Configuration: Debug</i>
-      - Under <i>Configuration Properties&rarr;C/C++&rarr;Preprocessor&rarr;Preprocessor Definitions</i> ensure that <b><i>SFML_STATIC</i></b> is listed.
-      - Under <i>Configuration Properties&rarr;Linker&rarr;Input&rarr;Additional Dependencies</i> ensure that these files are listed:
-        - sfml-graphics-s-d.lib
-        - sfml-window-s-d.lib
-        - sfml-system-s-d.lib
-        - sfml-audio-s-d.lib
-        - opengl32.lib
-        - freetype.lib
-        - winmm.lib
-        - gdi32.lib
-        - openal32.lib
-        - flac.lib
-        - vorbisenc.lib
-        - vorbisfile.lib
-        - vorbis.lib
-        - ogg.lib
-  - For a <b>Static Release</b> Build:
-    - For <i>Configuration: Release</i>
-      - Under <i>Configuration Properties&rarr;C/C++&rarr;Preprocessor&rarr;Preprocessor Definitions</i> ensure that <b><i>SFML_STATIC</i></b> is listed.
-      - Under <i>Configuration Properties&rarr;Linker&rarr;Input&rarr;Additional Dependencies</i> ensure that these files are listed:
-        - sfml-graphics-s.lib
-        - sfml-window-s.lib
-        - sfml-system-s.lib
-        - sfml-audio-s.lib
-        - opengl32.lib
-        - freetype.lib
-        - winmm.lib
-        - gdi32.lib
-        - openal32.lib
-        - flac.lib
-        - vorbisenc.lib
-        - vorbisfile.lib
-        - vorbis.lib
-        - ogg.lib
-  - For a <b>Dynamic Debug</b> Build:
-    - For <i>Configuration: Debug</i>
-      - Under <i>Configuration Properties&rarr;Linker&rarr;Input&rarr;Additional Dependencies</i> ensure that these files are listed:
-        - sfml-graphics-d.lib
-        - sfml-window-d.lib
-        - sfml-system-d.lib
-        - sfml-audio-d.lib
-  - For a <b>Dynamic Release</b> Build:
-    - For <i>Configuration: Release</i>
-      - Under <i>Configuration Properties&rarr;Linker&rarr;Input&rarr;Additional Dependencies</i> ensure that these files are listed:
-        - sfml-graphics.lib
-        - sfml-window.lib
-        - sfml-system.lib
-        - sfml-audio.lib
-- If SFML is linked dynamically, copy the dlls of SFML/bin into the folder that has the executable.
+- If you encounter linker errors that lead you to suspect that the graphics library is not linking, first try going into 32Win mode.  
+  - To go into 32Win mode:
+    - Click the button beside Debug/Release mode button (it will likely be 64 or 86). 
+    - From the popup menu, choose Win32.
+- If that doesn't fix the issue, check that <a href="#SFML">SFML is linked</a>.
 
 ## How to Run Project
 - Inside the Visual Studio IDE, press F5 or ctrl+F5, or click <i>Debug&rarr;Start Debugging</i> or <i>Debug&rarr;Start Without Debugging</i>.
+
+## <div id="SFML">How to Link SFML</div>
+Ensure that SFML is linking in at least 1 of 4 ways: static debug, static release, dynamic debug, or dyanmic release. Our project is set up with static linking for both debug and release modes (in 32Win mode), but could be switched to dynamic with relative ease. Inside the project properties:
+- For <i>Configuration: All Configurations</i>
+  - Under <i>Configuration Properties&rarr;C/C++&rarr;General&rarr;Additional Include Directories</i> ensure that <i><b>./SFML/include</b></i> is listed.
+  - Under <i>Configuration Properties&rarr;Linker&rarr;General&rarr;Additional Library Directories</i> ensure that <i><b>./SFML/lib</b></i> is listed.
+- For a <b>Static Debug</b> Build:
+  - For <i>Configuration: Debug</i>
+    - Under <i>Configuration Properties&rarr;C/C++&rarr;Preprocessor&rarr;Preprocessor Definitions</i> ensure that <b><i>SFML_STATIC</i></b> is listed.
+    - Under <i>Configuration Properties&rarr;Linker&rarr;Input&rarr;Additional Dependencies</i> ensure that these files are listed:
+      - sfml-graphics-s-d.lib
+      - sfml-window-s-d.lib
+      - sfml-system-s-d.lib
+      - sfml-audio-s-d.lib
+      - opengl32.lib
+      - freetype.lib
+      - winmm.lib
+      - gdi32.lib
+      - openal32.lib
+      - flac.lib
+      - vorbisenc.lib
+      - vorbisfile.lib
+      - vorbis.lib
+      - ogg.lib
+- For a <b>Static Release</b> Build:
+  - For <i>Configuration: Release</i>
+    - Under <i>Configuration Properties&rarr;C/C++&rarr;Preprocessor&rarr;Preprocessor Definitions</i> ensure that <b><i>SFML_STATIC</i></b> is listed.
+    - Under <i>Configuration Properties&rarr;Linker&rarr;Input&rarr;Additional Dependencies</i> ensure that these files are listed:
+      - sfml-graphics-s.lib
+      - sfml-window-s.lib
+      - sfml-system-s.lib
+      - sfml-audio-s.lib
+      - opengl32.lib
+      - freetype.lib
+      - winmm.lib
+      - gdi32.lib
+      - openal32.lib
+      - flac.lib
+      - vorbisenc.lib
+      - vorbisfile.lib
+      - vorbis.lib
+      - ogg.lib
+- For a <b>Dynamic Debug</b> Build:
+  - For <i>Configuration: Debug</i>
+    - Under <i>Configuration Properties&rarr;Linker&rarr;Input&rarr;Additional Dependencies</i> ensure that these files are listed:
+      - sfml-graphics-d.lib
+      - sfml-window-d.lib
+      - sfml-system-d.lib
+      - sfml-audio-d.lib
+- For a <b>Dynamic Release</b> Build:
+  - For <i>Configuration: Release</i>
+    - Under <i>Configuration Properties&rarr;Linker&rarr;Input&rarr;Additional Dependencies</i> ensure that these files are listed:
+      - sfml-graphics.lib
+      - sfml-window.lib
+      - sfml-system.lib
+      - sfml-audio.lib
+- If SFML is linked dynamically, copy the dlls of SFML/bin into the folder that has the executable.
 
 ## Rules of Boggle
 - 4 x 4 square of pseudo randomized letters
