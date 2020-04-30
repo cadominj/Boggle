@@ -5,8 +5,19 @@
        Date: 4/30/2020
 Description: A simplistic game of boggle using SFML graphics library.
 *****************************************************************************/
+#include "MainMenu.h"        // Main Menu Level
+#include "WordList.h"        // the dictionary and correctly guessed words
+#include "GameState.h"       // GameState
+#include "GamePlay.h"        // GamePlay Level
+#include "Rules.h"           // Rules Level
+#include "SettingsMenu.h"    // Settings Menu Level
+#include "Utility.h"         // DEBUG
 
-#include <SFML/Graphics.hpp>
+#include <cstdlib>           // srand
+#include <ctime>             // time for srand
+#include <iostream>          // cout, endl (debugging)
+#include <SFML/Graphics.hpp> // Font, Event
+
 
 /*
   The rules of boggle:
@@ -37,59 +48,86 @@ Description: A simplistic game of boggle using SFML graphics library.
     the case that a Q is placed)
 */
 
-/*
-  Example:
-
-  (create the 4 x 4 board of randomized characters)
-  A  N  E  T
-  P  Qu I  P
-  E  B  O  V
-  R  Y  S  W
-
-  player can create words:
-  BOVINE (3 points)
-  SOVIET (3 points)
-  QuIET  (2 points)
-  QuITE  (2 points)
-  QuERY  (2 points)
-  PINE   (1 point)
-  VINE   (1 point)
-  BITE   (1 point)
-  BOYS   (1 point)
-  VOWS   (1 point)
-  VOW    (1 point)
-  BOY    (1 point)
-  BOW    (1 point)
-  BIT    (1 point)
-  NET    (1 point)
-  TIN    (1 point)
-  TIE    (1 point)
-  PEN    (1 point)
-  SOY    (1 point)
-  PAN    (1 point)
-  APE    (1 point)
-  ... (and so on)
-*/
-
 // currently just a test that SFML is statically linking and operating smoothly
 int main()
 {
-  sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
-  sf::CircleShape shape(100.f);
-  shape.setFillColor(sf::Color::Green);
+///[ Initialize ]/////////////////////////////////////////////////////////////
+  // Random
+  srand((unsigned int)time(NULL)); // initialize rand()
+  // Word Lists
+#if !DEBUG
+  WordList dictionary, words;
+  dictionary.ReadFile();
+#endif
+  // Window
+  sf::RenderWindow window(sf::VideoMode(1500, 1000), "Boggle");
+  // Background
+  sf::RectangleShape background(sf::Vector2f(window.getSize().x, window.getSize().y));
+  background.setFillColor(sf::Color(5, 24, 41)); // dark blue colored background
+  // Font
+  sf::Font font;
+  font.loadFromFile("./Font/consola.ttf"); // kind of annoying that we can't just write "consola.ttf"
+//////////////////////////////////////////////////////////////////////////////
+
+  // game states/levels
+  GameState* level = new MainMenu; //GamePlay(&dictionary, &words); // first level is the main menu
+  level->Font(font);
+  level->Window(window);
+  level->Initialize();
 
   while (window.isOpen())
   {
     sf::Event event;
     while (window.pollEvent(event))
     {
+      // if user closes the window
       if (event.type == sf::Event::Closed)
         window.close();
+
+      level->Event(event);
+      level->Update();
     }
 
     window.clear();
-    window.draw(shape);
+    // draw background
+    window.draw(background);
+    // draw foreground
+    level->Draw();
     window.display();
+
+    // switch levels
+    if (level->Quit())
+    {
+      GameState::State nextLevel = level->NextLevel();
+      delete level;
+      level = nullptr;
+      switch (nextLevel)
+      {
+      case GameState::State::MainMenu:
+        level = new MainMenu;
+        break;
+      case GameState::State::GamePlay:
+#if !DEBUG
+        level = new GamePlay(&dictionary,&words);
+#endif
+        break;
+      case GameState::State::Rules:
+        level = new Rules;
+        break;
+      case GameState::State::Settings:
+        level = new SettingsMenu;
+        break;
+      default:
+        window.close();
+      }
+      // initialize level
+      if (level != nullptr)
+      {
+        level->Font(font);
+        level->Window(window);
+        level->Initialize();
+      }
+    }
   }
   return 0;
 }
