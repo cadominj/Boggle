@@ -14,15 +14,32 @@ Description: A simplistic game of boggle using SFML graphics library.
 
 class GamePlay : public GameState
 {
+  enum class Validity
+  {
+    VALID,              // valid
+    NOT_VALID,          // not valid: general case
+    NOT_WORD,           // not valid: not a word (not in dictionary)
+    DUPLICATE,          // not valid: duplicate (already in word list)
+    NOT_VALID_ON_BOARD  // not valid: no valid placement on the board
+  };
+
   // data
+  int score;
   WordList * dictionary;
-  WordList * words;
+  WordList words;
   Board board;
 
   sf::String inputStr;
-  sf::Text inputWord;
+  sf::Text inputTxt;
+  sf::Text scoreTxt;
+  sf::Text updateTxt;
+
+  // helper functions
+  Validity IsValid(std::string const& word);
+  int GetWords(std::string const& line);
+  int GetScore(std::string const& word);
 public:
-  GamePlay(WordList* dictionary, WordList* words);
+  GamePlay(WordList* dictionary);
   virtual void Initialize();
   virtual void Update();
   virtual void Draw();

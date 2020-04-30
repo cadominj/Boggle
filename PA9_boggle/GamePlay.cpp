@@ -17,45 +17,13 @@ Description: A simplistic game of boggle using SFML graphics library.
 
 namespace
 {
-  void GetWord(WordList& dictionary, WordList& words, Board& board, std::string const& line)
-  {
-    bool changed = false; // at least 1 new word
-    std::stringstream ss;
-    std::string word;
-    ss << line;
-    while (ss >> word)
-    {
-      if (dictionary.Find(word))
-      {
-        std::cout << word << " is a word";
-        if (!words.Find(word))
-        {
-          if (board.IsValidWord(word))
-          {
-            changed = true;
-            std::cout << "\n";
-            words.Insert(word);
-          }
-          else
-            std::cout << " but is not valid on the board\n";
-        }
-        else
-          std::cout << " but has already been used\n";
-      }
-      else
-        std::cout << word << " is NOT a word\n";
-    }
-    if (changed)
-      std::cout << "\n/// UPDATED WORD LIST ///\n"
-      << words
-      << "/////////////////////////\n";
-
-    std::cout << board; ////////////////////////////////// DEBUG
-
-  }
+  int const characterLimit = 100; // prevent text scrolling out of screen
+  float midX;                     // midpoint of the screen (horizontal)
+  // text Y positions
+  float inputTxtPosY, scoreTxtPosY, updateTxtPosY; 
 }
 
-GamePlay::GamePlay(WordList* dictionary, WordList* words) : dictionary(dictionary), words(words), board(Board()) {}
+GamePlay::GamePlay(WordList* dictionary) : score(0), dictionary(dictionary) {}
 
 void GamePlay::Initialize()
 {
@@ -63,9 +31,29 @@ void GamePlay::Initialize()
   board.Randomize();
   std::cout << board; //////////////////////DEBUG
   // Init Text
-  inputWord.setFont(font);
-  inputWord.setCharacterSize(18); // pixels
-  inputWord.setFillColor(sf::Color(222, 152, 13)); // bright orange text
+  scoreTxt.setString("SCORE: 0");
+  updateTxt.setString("Start Typing!");
+
+  scoreTxt.setFont(font);
+  updateTxt.setFont(font);
+  inputTxt.setFont(font);
+  
+  scoreTxt.setCharacterSize(50);
+  updateTxt.setCharacterSize(15);
+  inputTxt.setCharacterSize(20); // pixels
+
+  scoreTxt.setFillColor(sf::Color::White);
+  updateTxt.setFillColor(sf::Color::White);
+  inputTxt.setFillColor(sf::Color(222, 152, 13)); // bright orange text
+
+  // Text positioning
+  midX = window->getSize().x / 2;
+  inputTxtPosY = window->getSize().y - window->getSize().y / 3; // 2/3 down the screen
+  scoreTxtPosY = window->getSize().y / 6 - scoreTxt.getGlobalBounds().height / 2;
+  updateTxtPosY = scoreTxtPosY + window->getSize().y / 10;
+
+  scoreTxt.setPosition(midX - scoreTxt.getGlobalBounds().width / 2, scoreTxtPosY);
+  updateTxt.setPosition(midX - updateTxt.getGlobalBounds().width / 2, updateTxtPosY);
 }
 
 void GamePlay::Update()
@@ -83,35 +71,161 @@ void GamePlay::Update()
     {
       if (!inputStr.isEmpty())
       {
-        GetWord(*dictionary, *words, board, inputStr);
+        int lineScore = 0;
+        // If the score has changed
+        if (lineScore = GetWords(inputStr))
+        {
+          score += lineScore;
+          // Set update message
+          std::string str = "+ ";
+          str += std::to_string(lineScore);
+          updateTxt.setString(str);
+          // realiagn update text at center
+          updateTxt.setPosition(midX - updateTxt.getGlobalBounds().width / 2, updateTxtPosY);
+          // Update the score text string
+          str = "Score: ";
+          str += std::to_string(score);
+          scoreTxt.setString(str);
+          // realign score text at center
+          scoreTxt.setPosition(midX - scoreTxt.getGlobalBounds().width / 2, scoreTxtPosY);
+        }
+        else
+        {
+          //updateTxt.setString("word not valid");
+          updateTxt.setPosition(midX - updateTxt.getGlobalBounds().width / 2, updateTxtPosY);
+        }
         inputStr.clear();
-        inputWord.setString(inputStr);
+        inputTxt.setString(inputStr);
       }
     }
   }
   if (event->type == sf::Event::TextEntered)
   {
-    // ignore tab and enter
-    //if (event.text.unicode == 9 || event.text.unicode == 11 || event.text.unicode == 13) {}
+    // ignore escape, tab, and enter
+    if (event->text.unicode == 27 || event->text.unicode == 9 || event->text.unicode == 11 || event->text.unicode == 13) {}
     // Backspace: erase the last character
-    if (event->text.unicode == 8) //'\b'
+    else if (event->text.unicode == 8) //'\b'
     {
       if (!inputStr.isEmpty())
       {
         inputStr.erase(inputStr.getSize() - 1, 1);
-        inputWord.setString(inputStr);
+        inputTxt.setString(inputStr);
+        inputTxt.setPosition(midX - inputTxt.getGlobalBounds().width / 2, inputTxtPosY);
       }
     }
     // Other Characters: concat to the current word 
-    else
+    else if (inputStr.getSize() < characterLimit)
     {
       inputStr += event->text.unicode;
-      inputWord.setString(inputStr);
+      inputTxt.setString(inputStr);
+      inputTxt.setPosition(midX - inputTxt.getGlobalBounds().width / 2, inputTxtPosY);
     }
   }
 }
 
 void GamePlay::Draw()
 {
-  window->draw(inputWord);
+  window->draw(inputTxt);
+  window->draw(updateTxt);
+  window->draw(scoreTxt);
+}
+
+GamePlay::Validity GamePlay::IsValid(std::string const& word)
+{
+  Validity valid = Validity::NOT_VALID;
+  if (dictionary->Find(word))
+  {
+    if (!words.Find(word))
+    {
+      if (board.IsValidWord(word))
+        valid = Validity::VALID;
+      else
+        valid = Validity::NOT_VALID_ON_BOARD;
+    }
+    else
+      valid = Validity::DUPLICATE;
+  }
+  else
+    valid = Validity::NOT_WORD;
+  return valid;
+}
+
+// returns true if score changed
+int GamePlay::GetWords(std::string const& line)
+{
+  int lineScore = 0;   // total score of the line
+  Validity valid;      // validity of the last word (for more interesting feedback)
+  std::stringstream ss;
+  std::string word;
+  ss << line;
+  while (ss >> word)
+  {
+    if ((valid = IsValid(word)) == Validity::VALID)
+    {
+      lineScore += GetScore(word);
+      words.Insert(word);
+    }
+  }
+  ////////////////////////////////// DEBUG
+  if (lineScore)
+    std::cout << "score += " << lineScore
+    << "\n/// UPDATED WORD LIST ///\n"
+    << words
+    << "/////////////////////////\n";
+  std::cout << board; 
+  ////////////////////////////////// DEBUG
+  switch (valid)
+  {
+  case Validity::VALID:
+    break;
+  case Validity::NOT_WORD:
+    updateTxt.setString("word not valid: not a word");
+    break;
+  case Validity::DUPLICATE:
+    updateTxt.setString("word not valid: already used");
+    break;
+  case Validity::NOT_VALID_ON_BOARD:
+    updateTxt.setString("word not valid: word not available on the board");
+    break;
+  default:
+    break;
+  }
+  return lineScore; // false if linescore is 0, true otherwise
+}
+
+/*****************************************************************************
+Description: Calculate the score for the given word.
+             (in general: more letters = more points)
+             Here, score is the number of letters plus a bonus for longer words.
+             number of letters: 3 | 4 | 5 | 6 | 7 | 8+
+             bonus per word:    1 | 1 | 2 | 3 | 5 | 11
+      Input: - word = word to get the score for
+     Output: Returns the computed score.
+*****************************************************************************/
+int GamePlay::GetScore(std::string const& word)
+{
+  int bonus = 0; // longer words will get a bonus
+  switch (word.size())
+  {
+  case 1:
+  case 2:
+    break;
+  case 3:
+  case 4:
+    bonus = 1;
+    break;
+  case 5:
+    bonus = 2;
+    break;
+  case 6:
+    bonus = 3;
+    break;
+  case 7:
+    bonus = 5;
+    break;
+  default: // 8+
+    bonus = 11;
+    break;
+  }
+  return word.size() + bonus;
 }

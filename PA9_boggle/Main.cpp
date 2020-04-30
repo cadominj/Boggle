@@ -56,11 +56,12 @@ int main()
   srand((unsigned int)time(NULL)); // initialize rand()
   // Word Lists
 #if !DEBUG
-  WordList dictionary, words;
+  WordList dictionary;
   dictionary.ReadFile();
 #endif
   // Window
   sf::RenderWindow window(sf::VideoMode(1500, 1000), "Boggle");
+  window.setFramerateLimit(60);
   // Background
   sf::RectangleShape background(sf::Vector2f(window.getSize().x, window.getSize().y));
   background.setFillColor(sf::Color(5, 24, 41)); // dark blue colored background
@@ -108,7 +109,7 @@ int main()
         break;
       case GameState::State::GamePlay:
 #if !DEBUG
-        level = new GamePlay(&dictionary,&words);
+        level = new GamePlay(&dictionary);
 #endif
         break;
       case GameState::State::Rules:
