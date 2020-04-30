@@ -10,6 +10,6 @@ Description: A simplistic game of boggle using SFML graphics library.
 
 
 // 0 to disable debug functionality; non zero to enable
-#define DEBUG 1
+#define DEBUG 0
 
 #endif

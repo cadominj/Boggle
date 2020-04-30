@@ -5,6 +5,7 @@
        Date: 4/30/2020
 Description: A simplistic game of boggle using SFML graphics library.
 *****************************************************************************/
+
 #include "Board.h"           // 4 x 4 randomized board
 #include "GamePlay.h"        // GamePlay Level
 #include "WordList.h"        // the dictionary and correctly guessed words

@@ -18,6 +18,8 @@ Description: A simplistic game of boggle using SFML graphics library.
 #include <string>            // strings for parsing & saving words
 #include <sstream>           // stringstream for parsing multi-word lines
 
+#include "Utility.h"         // DEBUG
+
 /*
   The rules of boggle:
   - 4 x 4 square of pseudo randomized letters
@@ -54,8 +56,10 @@ int main()
   // Random
   srand((unsigned int)time(NULL)); // initialize rand()
   // Word Lists
+#if !DEBUG
   WordList dictionary, words;
   dictionary.ReadFile();
+#endif
   // Window
   sf::RenderWindow window(sf::VideoMode(1500, 1000), "Boggle");
   // Background
@@ -67,7 +71,7 @@ int main()
 //////////////////////////////////////////////////////////////////////////////
 
   // game states/levels
-  GameState* level = new GamePlay(&dictionary, &words); // first level is the main menu
+  GameState* level = new MainMenu; //GamePlay(&dictionary, &words); // first level is the main menu
   level->Font(font);
   level->Window(window);
   level->Initialize();
@@ -104,7 +108,9 @@ int main()
         level = new MainMenu;
         break;
       case GameState::State::GamePlay:
+#if !DEBUG
         level = new GamePlay(&dictionary,&words);
+#endif
         break;
       case GameState::State::Rules:
         //level = new Rules();
