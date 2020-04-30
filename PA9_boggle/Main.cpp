@@ -5,20 +5,19 @@
        Date: 4/30/2020
 Description: A simplistic game of boggle using SFML graphics library.
 *****************************************************************************/
-#include "Board.h"           // 4 x 4 randomized board
 #include "MainMenu.h"        // Main Menu Level
 #include "WordList.h"        // the dictionary and correctly guessed words
 #include "GameState.h"       // GameState
 #include "GamePlay.h"        // GamePlay Level
+#include "Rules.h"           // Rules Level
+#include "SettingsMenu.h"    // Settings Menu Level
+#include "Utility.h"         // DEBUG
 
 #include <cstdlib>           // srand
 #include <ctime>             // time for srand
 #include <iostream>          // cout, endl (debugging)
-#include <SFML/Graphics.hpp>
-#include <string>            // strings for parsing & saving words
-#include <sstream>           // stringstream for parsing multi-word lines
+#include <SFML/Graphics.hpp> // Font, Event
 
-#include "Utility.h"         // DEBUG
 
 /*
   The rules of boggle:
@@ -113,10 +112,10 @@ int main()
 #endif
         break;
       case GameState::State::Rules:
-        //level = new Rules();
+        level = new Rules;
         break;
       case GameState::State::Settings:
-        //level = new Settings();
+        level = new SettingsMenu;
         break;
       default:
         window.close();

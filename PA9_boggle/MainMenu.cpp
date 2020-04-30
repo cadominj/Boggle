@@ -6,7 +6,7 @@
 Description: A simplistic game of boggle using SFML graphics library.
 *****************************************************************************/
 #include "MainMenu.h"
-#include <SFML/Graphics.hpp>
+#include <SFML/Graphics.hpp> // Text, RectangleShape
 
 namespace
 {
@@ -35,12 +35,11 @@ void MainMenu::Initialize()
   SettingsTxt.setFont(font);
   QuitTxt.setFont(font);
 
-  
+  TitleTxt.setPosition(midX - TitleTxt.getGlobalBounds().width / 2, window->getSize().y / 6 - TitleTxt.getGlobalBounds().height / 2);
   PlayTxt.setPosition(midX - PlayTxt.getGlobalBounds().width / 2, window->getSize().y / 3);
   RulesTxt.setPosition(midX - RulesTxt.getGlobalBounds().width / 2, PlayTxt.getPosition().y + vOffset);
   SettingsTxt.setPosition(midX - SettingsTxt.getGlobalBounds().width / 2, RulesTxt.getPosition().y + vOffset);
   QuitTxt.setPosition(midX - QuitTxt.getGlobalBounds().width / 2, SettingsTxt.getPosition().y + vOffset);
-  TitleTxt.setPosition(midX - TitleTxt.getGlobalBounds().width / 2, PlayTxt.getPosition().y / 2);
 
   TitleTxt.setFillColor(sf::Color::Green);
   PlayTxt.setFillColor(sf::Color::White);
@@ -96,8 +95,6 @@ void MainMenu::Update()
   float mouseX = window->mapPixelToCoords(sf::Mouse::getPosition(*window)).x;
   float mouseY = window->mapPixelToCoords(sf::Mouse::getPosition(*window)).y;
 
-  //sf::Mouse::setPosition({ (int)PlayTxt.getGlobalBounds().left , (int)PlayTxt.getGlobalBounds().top });
-
   // if inside the bounding box of Play
   if (PlayBox.getGlobalBounds().contains(mouseX, mouseY))
   {
@@ -106,9 +103,7 @@ void MainMenu::Update()
       Inside = State::GamePlay;
       PlayBox.setFillColor(sf::Color::White);
       PlayTxt.setFillColor(sf::Color::Black);
-      //PlayTxt.setStyle(sf::Text::Bold);
     }
-    
   }
   // if inside the bounding box of Rules
   else if (RulesBox.getGlobalBounds().contains(mouseX, mouseY))
@@ -119,7 +114,6 @@ void MainMenu::Update()
       RulesBox.setFillColor(sf::Color::White);
       RulesTxt.setFillColor(sf::Color::Black);
     }
-    
   }
   // if inside the bounding box of Settings
   else if (SettingsBox.getGlobalBounds().contains(mouseX, mouseY))
