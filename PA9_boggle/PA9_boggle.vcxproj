@@ -163,6 +163,7 @@
     <ClInclude Include="Rules.h" />
     <ClInclude Include="Settings.h" />
     <ClInclude Include="SettingsMenu.h" />
+    <ClInclude Include="Stats.h" />
     <ClInclude Include="Utility.h" />
     <ClInclude Include="WordList.h" />
   </ItemGroup>

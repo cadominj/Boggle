@@ -13,6 +13,8 @@ namespace
   sf::Text titleTxt, returnTxt;
 }
 
+EndScreen::EndScreen(Stats& stats) : stats(stats) {}
+
 void EndScreen::Initialize()
 {
   titleTxt.setString("RESULTS");

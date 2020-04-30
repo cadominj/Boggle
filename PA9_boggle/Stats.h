@@ -5,20 +5,17 @@
        Date: 4/30/2020
 Description: A simplistic game of boggle using SFML graphics library.
 *****************************************************************************/
-#ifndef END_SCREEN_H
-#define END_SCREEN_H
+#ifndef STATS_H
+#define STATS_H
 
-#include "GameState.h"
-#include "Stats.h"
+#include <string> // string for saving words
 
-class EndScreen : public GameState
+struct Stats
 {
-  Stats& stats;
-public:
-  EndScreen(Stats& stats);
-  virtual void Initialize();
-  virtual void Update();
-  virtual void Draw();
+  int score;
+  std::string longestWord;
+  // others?
+  // time?
 };
 
-#endif // !END_SCREEN_H
+#endif // !STATS_H

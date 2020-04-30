@@ -13,6 +13,7 @@ Description: A simplistic game of boggle using SFML graphics library.
 #include "Rules.h"           // Rules Level
 #include "Settings.h"        // Settings to be modified in settings menu
 #include "SettingsMenu.h"    // Settings Menu Level
+#include "Stats.h"           // Stats to track & display on end screen
 #include "Utility.h"         // DEBUG
 
 #include <cstdlib>           // srand
@@ -72,6 +73,8 @@ int main()
   font.loadFromFile("./Font/consola.ttf"); // kind of annoying that we can't just write "consola.ttf"
   // Settings
   Settings settings;
+  // Stats
+  Stats stats;
 //////////////////////////////////////////////////////////////////////////////
 
   // game states/levels
@@ -123,7 +126,7 @@ int main()
         level = new SettingsMenu(settings);
         break;
       case GameState::State::EndScreen:
-        level = new EndScreen();
+        level = new EndScreen(stats);
         break;
       default:
         window.close();

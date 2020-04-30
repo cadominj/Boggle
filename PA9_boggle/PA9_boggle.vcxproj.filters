@@ -74,6 +74,9 @@
     <ClInclude Include="EndScreen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Stats.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Dictionary\words_alpha.txt">
