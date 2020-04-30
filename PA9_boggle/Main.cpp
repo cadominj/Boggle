@@ -5,11 +5,13 @@
        Date: 4/30/2020
 Description: A simplistic game of boggle using SFML graphics library.
 *****************************************************************************/
+#include "EndScreen.h"       // End Screen Level
 #include "MainMenu.h"        // Main Menu Level
 #include "WordList.h"        // the dictionary and correctly guessed words
 #include "GameState.h"       // GameState
 #include "GamePlay.h"        // GamePlay Level
 #include "Rules.h"           // Rules Level
+#include "Settings.h"        // Settings to be modified in settings menu
 #include "SettingsMenu.h"    // Settings Menu Level
 #include "Utility.h"         // DEBUG
 
@@ -68,6 +70,8 @@ int main()
   // Font
   sf::Font font;
   font.loadFromFile("./Font/consola.ttf"); // kind of annoying that we can't just write "consola.ttf"
+  // Settings
+  Settings settings;
 //////////////////////////////////////////////////////////////////////////////
 
   // game states/levels
@@ -115,8 +119,11 @@ int main()
       case GameState::State::Rules:
         level = new Rules;
         break;
-      case GameState::State::Settings:
-        level = new SettingsMenu;
+      case GameState::State::SettingsMenu:
+        level = new SettingsMenu(settings);
+        break;
+      case GameState::State::EndScreen:
+        level = new EndScreen();
         break;
       default:
         window.close();

@@ -5,20 +5,17 @@
        Date: 4/30/2020
 Description: A simplistic game of boggle using SFML graphics library.
 *****************************************************************************/
-#include "SettingsMenu.h"
-#include <SFML/Graphics.hpp> // Text
+#include "EndScreen.h"
+#include <SFML/Graphics.hpp> // text, window
 
 namespace
 {
   sf::Text titleTxt, returnTxt;
 }
 
-SettingsMenu::SettingsMenu(Settings& settings) : settings(settings) {}
-
-void SettingsMenu::Initialize()
+void EndScreen::Initialize()
 {
-
-  titleTxt.setString("SETTINGS");
+  titleTxt.setString("RESULTS");
   returnTxt.setString("RETURN");
 
   titleTxt.setFont(font);
@@ -36,7 +33,7 @@ void SettingsMenu::Initialize()
   returnTxt.setPosition(midX - returnTxt.getGlobalBounds().width / 2, window->getSize().y / 3);
 }
 
-void SettingsMenu::Update()
+void EndScreen::Update()
 {
   if (event->type == sf::Event::KeyReleased)
   {
@@ -49,7 +46,7 @@ void SettingsMenu::Update()
   }
 }
 
-void SettingsMenu::Draw()
+void EndScreen::Draw()
 {
   window->draw(titleTxt);
   window->draw(returnTxt);

@@ -5,20 +5,17 @@
        Date: 4/30/2020
 Description: A simplistic game of boggle using SFML graphics library.
 *****************************************************************************/
-#ifndef SETTINGS_MENU_H
-#define SETTINGS_MENU_H
+#ifndef END_SCREEN_H
+#define END_SCREEN_H
 
 #include "GameState.h"
-#include "Settings.h"
 
-class SettingsMenu : public GameState
+class EndScreen : public GameState
 {
-  Settings& settings;
 public:
-  SettingsMenu(Settings& settings);
   virtual void Initialize();
   virtual void Update();
   virtual void Draw();
 };
 
-#endif // !SETTINGS_H
+#endif // !END_SCREEN_H

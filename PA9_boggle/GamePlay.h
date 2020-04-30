@@ -29,6 +29,8 @@ class GamePlay : public GameState
   WordList words;
   Board board;
 
+  sf::Text* boardTxt;
+
   sf::String inputStr;
   sf::Text inputTxt;
   sf::Text scoreTxt;

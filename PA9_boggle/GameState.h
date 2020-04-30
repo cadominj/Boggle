@@ -19,7 +19,8 @@ public:
     MainMenu,
     GamePlay,
     Rules,
-    Settings
+    SettingsMenu,
+    EndScreen
   };
 
   GameState();

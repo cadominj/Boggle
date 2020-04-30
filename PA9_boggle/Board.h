@@ -43,6 +43,8 @@ public:
 
   // getters
   bool Duplicates()const;
+  int ColSize()const;
+  int RowSize()const;
 
   // randomizes the characters on the board
   void Randomize(); 
@@ -51,6 +53,16 @@ public:
   bool IsValidWord(std::string const& word) const;
 
   friend std::ostream& operator<<(std::ostream& os, Board const& obj);
+
+  // overloading [][] operator using proxy
+  class Proxy
+  {
+    char* row;
+  public:
+    Proxy(char* row);
+    char operator[](int i) const;
+  };
+  Proxy operator[](int i) const;
 };
 
 #endif // !BOARD_H

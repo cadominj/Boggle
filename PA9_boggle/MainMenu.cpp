@@ -118,9 +118,9 @@ void MainMenu::Update()
   // if inside the bounding box of Settings
   else if (SettingsBox.getGlobalBounds().contains(mouseX, mouseY))
   {
-    if (Inside != State::Settings)
+    if (Inside != State::SettingsMenu)
     {
-      Inside = State::Settings;
+      Inside = State::SettingsMenu;
       SettingsBox.setFillColor(sf::Color::White);
       SettingsTxt.setFillColor(sf::Color::Black);
     }
@@ -150,7 +150,7 @@ void MainMenu::Update()
         RulesBox.setFillColor(sf::Color::Transparent);
         RulesTxt.setFillColor(sf::Color::White);
         break;
-      case State::Settings:
+      case State::SettingsMenu:
         SettingsBox.setFillColor(sf::Color::Transparent);
         SettingsTxt.setFillColor(sf::Color::White);
         break;

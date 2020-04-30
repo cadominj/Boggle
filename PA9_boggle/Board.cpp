@@ -81,6 +81,25 @@ bool Board::Duplicates()const
 }
 
 /*****************************************************************************
+Description: Column Size getter.
+     Output: Returns the current number of columns. (width of board)
+*****************************************************************************/
+int Board::ColSize()const
+{
+  return colSize;
+}
+
+/*****************************************************************************
+Description: Row Size getter.
+     Output: Returns the current number of rows. (height of board)
+*****************************************************************************/
+int Board::RowSize()const
+{
+  return rowSize;
+}
+
+
+/*****************************************************************************
 Description: Given a valid position (path.top) that holds the first letter of 
              the given word recursively find if that word exists on the board
              (successive letters in the word must be horizontally, vertically, 
@@ -256,4 +275,32 @@ std::ostream& operator<<(std::ostream& os, Board const& obj)
     os << std::endl;
   }
   return os;
+}
+
+/*****************************************************************************
+Description: Proxy constructor
+*****************************************************************************/
+Board::Proxy::Proxy(char* row) : row(row) {}
+
+/*****************************************************************************
+Description: Proxy's operator [], returns the character at location: 
+             row = Proxy, col = i
+Assumptions: Assumes i is a valid index
+      input: - i = index (column number)
+     Output: Returns the character at index i (column number)
+*****************************************************************************/
+char Board::Proxy::operator[](int i) const
+{
+  return row[i];
+}
+
+/*****************************************************************************
+Description: Board's operator[], returns the proxy (or row) at row = i
+Assumptions: Assumes i is a valid index
+      input: - i = index (row number)
+     Output: Returns the proxy at index i (row number)
+*****************************************************************************/
+Board::Proxy Board::operator[](int i) const
+{
+  return Proxy(board[i]);
 }

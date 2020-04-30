@@ -29,7 +29,9 @@ void GamePlay::Initialize()
 {
   // Init Board
   board.Randomize();
-  std::cout << board; //////////////////////DEBUG
+  ////////////////////////////////// DEBUG
+  std::cout << board;
+  ////////////////////////////////// DEBUG
   // Init Text
   scoreTxt.setString("SCORE: 0");
   updateTxt.setString("Start Typing!");
@@ -63,7 +65,7 @@ void GamePlay::Update()
     // Escape Key: exit back to main menu
     if (event->key.code == sf::Keyboard::Escape)
     {
-      nextLevel = State::MainMenu;
+      nextLevel = State::EndScreen;
       quit = true;
     }
     // Enter: try to input text into the player's word list
@@ -83,7 +85,7 @@ void GamePlay::Update()
           // realiagn update text at center
           updateTxt.setPosition(midX - updateTxt.getGlobalBounds().width / 2, updateTxtPosY);
           // Update the score text string
-          str = "Score: ";
+          str = "SCORE: ";
           str += std::to_string(score);
           scoreTxt.setString(str);
           // realign score text at center
@@ -153,10 +155,10 @@ GamePlay::Validity GamePlay::IsValid(std::string const& word)
 // returns true if score changed
 int GamePlay::GetWords(std::string const& line)
 {
-  int lineScore = 0;   // total score of the line
-  Validity valid;      // validity of the last word (for more interesting feedback)
-  std::stringstream ss;
-  std::string word;
+  int lineScore = 0;                    // total score of the line
+  Validity valid = Validity::NOT_VALID; // validity of the last word (for more interesting feedback)
+  std::stringstream ss;                 // string stream paser (for multiple words)
+  std::string word;                     // singular word to inspect
   ss << line;
   while (ss >> word)
   {
@@ -168,24 +170,29 @@ int GamePlay::GetWords(std::string const& line)
   }
   ////////////////////////////////// DEBUG
   if (lineScore)
-    std::cout << "score += " << lineScore
-    << "\n/// UPDATED WORD LIST ///\n"
-    << words
-    << "/////////////////////////\n";
-  std::cout << board; 
+  {
+    std::cout 
+      << "\n/// UPDATED WORD LIST ///\n"
+      << words
+      << "/////////////////////////\n"
+      << board;
+  }
   ////////////////////////////////// DEBUG
   switch (valid)
   {
   case Validity::VALID:
     break;
   case Validity::NOT_WORD:
-    updateTxt.setString("word not valid: not a word");
+    word += " is not a word";
+    updateTxt.setString(word);
     break;
   case Validity::DUPLICATE:
-    updateTxt.setString("word not valid: already used");
+    word += " has already been used";
+    updateTxt.setString(word);
     break;
   case Validity::NOT_VALID_ON_BOARD:
-    updateTxt.setString("word not valid: word not available on the board");
+    word += " is not available on the board";
+    updateTxt.setString(word);
     break;
   default:
     break;
