@@ -14,6 +14,8 @@ Description: A simplistic game of boggle using SFML graphics library.
 #include "Stats.h"     // stats struct
 #include "WordList.h"  // for the dictionary & running word list
 
+#include <vector>      // vector for wordsTxt
+
 
 class GamePlay : public GameState
 {
@@ -36,7 +38,7 @@ class GamePlay : public GameState
   WordList words;
   Board board;
 
-  
+  std::vector<sf::Text> wordsTxt;
 
   sf::String inputStr;
   sf::Text inputTxt;

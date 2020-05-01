@@ -17,6 +17,7 @@ Description: A simplistic game of boggle using SFML graphics library.
 #include <SFML/Graphics.hpp> // text, window
 #include <string>            // strings for parsing & saving words
 #include <sstream>           // stringstream for parsing multi-word lines
+#include <vector>            // vector for wordsTxt
 
 namespace
 {
@@ -35,7 +36,8 @@ namespace
 
 GamePlay::GamePlay(WordList& dictionary, Settings& settings, Stats& stats) 
   : score(0), dictionary(dictionary), settings(settings), stats(stats), 
-    boardTxt(nullptr), boardSquares(nullptr), words(WordList()), board(Board())
+    boardTxt(nullptr), boardSquares(nullptr), words(WordList()), board(Board()),
+    wordsTxt(std::vector<sf::Text>())
 {
   boardSize = board.ColSize() * board.RowSize();
   boardTxt = new sf::Text[boardSize];
@@ -162,6 +164,14 @@ void GamePlay::Update()
           scoreTxt.setString(str);
           // realign score text at center
           scoreTxt.setPosition(midX - scoreTxt.getGlobalBounds().width / 2, scoreTxtPosY);
+          // Update wordsTxt positioning
+          int i = 0;
+          sf::Vector2f pos(20, 20);
+          float offsetY = 0.0f;
+          if (!wordsTxt.empty())
+            offsetY = wordsTxt[0].getGlobalBounds().height * 1.5f;
+          for (std::vector<sf::Text>::reverse_iterator rIt = wordsTxt.rbegin(); rIt != wordsTxt.rend(); ++rIt)
+            rIt->setPosition({ pos.x, pos.y + i++ * offsetY });
         }
         else
         {
@@ -203,6 +213,7 @@ void GamePlay::Update()
   }
 }
 
+// draw to the screen
 void GamePlay::Draw()
 {
   // Draw Board
@@ -212,6 +223,9 @@ void GamePlay::Draw()
     window->draw(boardSquares[i]);
     window->draw(boardTxt[i]);
   }
+  // Draw word list
+  for (std::vector<sf::Text>::reverse_iterator rIt = wordsTxt.rbegin(); rIt != wordsTxt.rend(); ++rIt)
+    window->draw(*rIt);
   // Draw Text
   returnBtn.DrawTo(*window);
   window->draw(updateTxt);
@@ -219,6 +233,7 @@ void GamePlay::Draw()
   window->draw(inputTxt);
 }
 
+// returns the specific validity of a word (if it was valid or specifically why it was ruled out as not valid)
 GamePlay::Validity GamePlay::IsValid(std::string const& word)
 {
   Validity valid = Validity::NOT_VALID;
@@ -253,6 +268,8 @@ int GamePlay::GetWords(std::string const& line)
     {
       lineScore += GetScore(word);
       words.Insert(word);
+      // insert word to wordsTxt vector
+      wordsTxt.push_back(sf::Text(word,font,20));
     }
   }
   ////////////////////////////////// DEBUG
