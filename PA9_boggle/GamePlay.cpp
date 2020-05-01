@@ -7,6 +7,7 @@ Description: A simplistic game of boggle using SFML graphics library.
 *****************************************************************************/
 
 #include "Board.h"           // 4 x 4 randomized board
+#include "Button.h"          // return button
 #include "GamePlay.h"        // GamePlay Level
 #include "Settings.h"        // settings struct 
 #include "Stats.h"           // stats struct
@@ -19,16 +20,22 @@ Description: A simplistic game of boggle using SFML graphics library.
 
 namespace
 {
+  // Button
+  int const btnTextSize = 30;
+  float const btnOutlineWidth = 2.0f;
+  // Text
   int const characterLimit = 100; // prevent text scrolling out of screen
   float midX;                     // midpoint of the screen (horizontal)
   // text Y positions
   float inputTxtPosY, scoreTxtPosY, updateTxtPosY; 
   int boardSize;
   sf::RectangleShape boardOutline;
+  Button returnBtn;
 }
 
 GamePlay::GamePlay(WordList& dictionary, Settings& settings, Stats& stats) 
-  : score(0), dictionary(dictionary), settings(settings), stats(stats), boardTxt(nullptr), boardSquares(nullptr)
+  : score(0), dictionary(dictionary), settings(settings), stats(stats), 
+    boardTxt(nullptr), boardSquares(nullptr), words(WordList()), board(Board())
 {
   boardSize = board.ColSize() * board.RowSize();
   boardTxt = new sf::Text[boardSize];
@@ -37,6 +44,10 @@ GamePlay::GamePlay(WordList& dictionary, Settings& settings, Stats& stats)
 
 GamePlay::~GamePlay()
 {
+  // save statistics 
+  stats.score = score;
+  stats.longestWord = words.FindLongestWord();
+
   if (boardTxt)
     delete[] boardTxt;
   if (boardSquares)
@@ -63,7 +74,11 @@ void GamePlay::Initialize()
 
   scoreTxt.setFillColor(sf::Color::White);
   updateTxt.setFillColor(sf::Color::White);
-  inputTxt.setFillColor(sf::Color::Green); // bright orange text
+  inputTxt.setFillColor(sf::Color::Green);
+
+  // Init Return Button
+  returnBtn.SetButton("RETURN", font, btnTextSize, sf::Color::White, sf::Color::Transparent, sf::Color::White, btnOutlineWidth);
+  returnBtn.SetHover(sf::Color::Black, sf::Color::White, sf::Color::White);
 
   // Text positioning
   midX = window->getSize().x / 2;
@@ -73,6 +88,9 @@ void GamePlay::Initialize()
 
   scoreTxt.setPosition(midX - scoreTxt.getGlobalBounds().width / 2, scoreTxtPosY);
   updateTxt.setPosition(midX - updateTxt.getGlobalBounds().width / 2, updateTxtPosY);
+
+  // Return Button position
+  returnBtn.Position({ midX - returnBtn.GetGlobalBounds().width / 2.0f, window->getSize().y - window->getSize().y / 6.0f });
 
   // Init Board Text
   for (int i = 0; i < boardSize; ++i)
@@ -87,7 +105,6 @@ void GamePlay::Initialize()
   float offsetY = -boardTxt[0].getLocalBounds().top;
   float offsetX = (boardTxt[0].getGlobalBounds().height - boardTxt[0].getLocalBounds().width) / 2.0f;
   if (offsetX < 0) offsetX = -offsetX;
-  std::cout << "offset: " << offsetX << std::endl;
   offsetX -= boardTxt[0].getLocalBounds().left;
   float padding = 5.0, spacing = 10.0;
   float padDim = letterDim + 2 * padding;
@@ -178,20 +195,28 @@ void GamePlay::Update()
       inputTxt.setPosition(midX - inputTxt.getGlobalBounds().width / 2, inputTxtPosY);
     }
   }
+  // if click return, go back to main menu
+  if (returnBtn.IsMouseOver(*window) && event->type == sf::Event::MouseButtonReleased)
+  {
+    nextLevel = State::EndScreen;
+    quit = true;
+  }
 }
 
 void GamePlay::Draw()
 {
-  window->draw(inputTxt);
-  window->draw(updateTxt);
-  window->draw(scoreTxt);
+  // Draw Board
   window->draw(::boardOutline);
-
   for (int i = 0; i < boardSize; ++i)
   {
     window->draw(boardSquares[i]);
     window->draw(boardTxt[i]);
   }
+  // Draw Text
+  returnBtn.DrawTo(*window);
+  window->draw(updateTxt);
+  window->draw(scoreTxt);
+  window->draw(inputTxt);
 }
 
 GamePlay::Validity GamePlay::IsValid(std::string const& word)

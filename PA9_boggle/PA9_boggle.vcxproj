@@ -145,6 +145,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Board.cpp" />
+    <ClCompile Include="Button.cpp" />
     <ClCompile Include="EndScreen.cpp" />
     <ClCompile Include="GamePlay.cpp" />
     <ClCompile Include="GameState.cpp" />
@@ -152,10 +153,12 @@
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Rules.cpp" />
     <ClCompile Include="SettingsMenu.cpp" />
+    <ClCompile Include="Test.cpp" />
     <ClCompile Include="WordList.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Board.h" />
+    <ClInclude Include="Button.h" />
     <ClInclude Include="EndScreen.h" />
     <ClInclude Include="GamePlay.h" />
     <ClInclude Include="GameState.h" />
@@ -164,6 +167,7 @@
     <ClInclude Include="Settings.h" />
     <ClInclude Include="SettingsMenu.h" />
     <ClInclude Include="Stats.h" />
+    <ClInclude Include="Test.h" />
     <ClInclude Include="Utility.h" />
     <ClInclude Include="WordList.h" />
   </ItemGroup>

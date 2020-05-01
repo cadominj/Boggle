@@ -124,3 +124,23 @@ std::ostream& operator<<(std::ostream& os, WordList const& obj)
     os << *it << std::endl;
   return os;
 }
+
+/*****************************************************************************
+Description: Find the longest word.
+     Output: Returns the longest word in the word list. (as a copy)
+*****************************************************************************/
+std::string WordList::FindLongestWord() const
+{
+  int max = 0;                    // length of longest word
+  std::string* longest = nullptr; // longest word
+  int len;                        // length of current word
+  for (std::set<std::string>::iterator it = words.begin(); it != words.end(); ++it)
+  {
+    if ((len = it->length()) > max)
+    {
+      longest = const_cast<std::string*>(&*it);
+      max = len;
+    }
+  }
+  return longest == nullptr ? "" : *longest;
+}

@@ -38,6 +38,9 @@ public:
   void ReadFile(std::string const& filename = DICTIONARY_FILE); // takes all words from the file and inserts them
 
   friend std::ostream& operator<<(std::ostream & os, WordList const& obj);
+
+  // for stats
+  std::string FindLongestWord() const;
 };
 
 #endif
