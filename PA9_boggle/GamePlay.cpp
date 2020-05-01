@@ -8,6 +8,8 @@ Description: A simplistic game of boggle using SFML graphics library.
 
 #include "Board.h"           // 4 x 4 randomized board
 #include "GamePlay.h"        // GamePlay Level
+#include "Settings.h"        // settings struct 
+#include "Stats.h"           // stats struct
 #include "WordList.h"        // the dictionary and correctly guessed words
 
 #include <iostream>          // cout, endl (debugging)
@@ -21,17 +23,32 @@ namespace
   float midX;                     // midpoint of the screen (horizontal)
   // text Y positions
   float inputTxtPosY, scoreTxtPosY, updateTxtPosY; 
+  int boardSize;
+  sf::RectangleShape boardOutline;
 }
 
-GamePlay::GamePlay(WordList* dictionary) : score(0), dictionary(dictionary) {}
+GamePlay::GamePlay(WordList& dictionary, Settings& settings, Stats& stats) 
+  : score(0), dictionary(dictionary), settings(settings), stats(stats), boardTxt(nullptr), boardSquares(nullptr)
+{
+  boardSize = board.ColSize() * board.RowSize();
+  boardTxt = new sf::Text[boardSize];
+  boardSquares = new sf::RectangleShape[boardSize];
+}
+
+GamePlay::~GamePlay()
+{
+  if (boardTxt)
+    delete[] boardTxt;
+  if (boardSquares)
+    delete[] boardSquares;
+}
 
 void GamePlay::Initialize()
 {
+  float const outlineWidth = 2.0f;
+
   // Init Board
   board.Randomize();
-  ////////////////////////////////// DEBUG
-  std::cout << board;
-  ////////////////////////////////// DEBUG
   // Init Text
   scoreTxt.setString("SCORE: 0");
   updateTxt.setString("Start Typing!");
@@ -46,7 +63,7 @@ void GamePlay::Initialize()
 
   scoreTxt.setFillColor(sf::Color::White);
   updateTxt.setFillColor(sf::Color::White);
-  inputTxt.setFillColor(sf::Color(222, 152, 13)); // bright orange text
+  inputTxt.setFillColor(sf::Color::Green); // bright orange text
 
   // Text positioning
   midX = window->getSize().x / 2;
@@ -56,6 +73,44 @@ void GamePlay::Initialize()
 
   scoreTxt.setPosition(midX - scoreTxt.getGlobalBounds().width / 2, scoreTxtPosY);
   updateTxt.setPosition(midX - updateTxt.getGlobalBounds().width / 2, updateTxtPosY);
+
+  // Init Board Text
+  for (int i = 0; i < boardSize; ++i)
+  {
+    boardTxt[i].setString(board[i / board.ColSize()][i % board.ColSize()]);
+    boardTxt[i].setFont(font);
+    boardTxt[i].setCharacterSize(60);
+  }
+  
+  // Position Board Txt & Board Squares
+  float letterDim = boardTxt[0].getGlobalBounds().height > boardTxt[0].getGlobalBounds().width ? boardTxt[0].getGlobalBounds().height : boardTxt[0].getLocalBounds().width;
+  float offsetY = -boardTxt[0].getLocalBounds().top;
+  float offsetX = (boardTxt[0].getGlobalBounds().height - boardTxt[0].getLocalBounds().width) / 2.0f;
+  if (offsetX < 0) offsetX = -offsetX;
+  std::cout << "offset: " << offsetX << std::endl;
+  offsetX -= boardTxt[0].getLocalBounds().left;
+  float padding = 5.0, spacing = 10.0;
+  float padDim = letterDim + 2 * padding;
+  float gridDim = padDim + 2 * spacing;
+  sf::Vector2f boxDim = { board.ColSize() * gridDim, board.RowSize() * gridDim };
+  sf::Vector2f pos = { midX - boxDim.x / 2, window->getSize().y / 3.0f };
+
+  for (int i = 0; i < boardSize; ++i)
+  {
+    // Text Position
+    boardTxt[i].setPosition({ pos.x + i % board.ColSize() * gridDim + spacing + padding + offsetX, pos.y + i / board.ColSize() * gridDim + spacing + padding + offsetY });
+    // Board Square Position + Formatting
+    boardSquares[i].setPosition({boardTxt[i].getPosition().x - offsetX - padding, boardTxt[i].getPosition().y - offsetY - padding});
+    boardSquares[i].setFillColor(sf::Color(5, 24, 41));
+    boardSquares[i].setSize({ padDim, padDim });
+    boardSquares[i].setOutlineThickness(outlineWidth / 2);
+    boardSquares[i].setOutlineColor(sf::Color(255,255,255,100));
+  }
+  // Board Outline
+  ::boardOutline.setPosition(pos);
+  ::boardOutline.setSize(boxDim);
+  ::boardOutline.setOutlineThickness(outlineWidth);
+  ::boardOutline.setFillColor(sf::Color::Black);
 }
 
 void GamePlay::Update()
@@ -130,12 +185,19 @@ void GamePlay::Draw()
   window->draw(inputTxt);
   window->draw(updateTxt);
   window->draw(scoreTxt);
+  window->draw(::boardOutline);
+
+  for (int i = 0; i < boardSize; ++i)
+  {
+    window->draw(boardSquares[i]);
+    window->draw(boardTxt[i]);
+  }
 }
 
 GamePlay::Validity GamePlay::IsValid(std::string const& word)
 {
   Validity valid = Validity::NOT_VALID;
-  if (dictionary->Find(word))
+  if (dictionary.Find(word))
   {
     if (!words.Find(word))
     {
@@ -170,13 +232,10 @@ int GamePlay::GetWords(std::string const& line)
   }
   ////////////////////////////////// DEBUG
   if (lineScore)
-  {
-    std::cout 
+    std::cout
       << "\n/// UPDATED WORD LIST ///\n"
       << words
-      << "/////////////////////////\n"
-      << board;
-  }
+      << "/////////////////////////\n";
   ////////////////////////////////// DEBUG
   switch (valid)
   {

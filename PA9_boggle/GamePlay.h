@@ -10,7 +10,10 @@ Description: A simplistic game of boggle using SFML graphics library.
 
 #include "Board.h"     // Board
 #include "GameState.h"
+#include "Settings.h"  // settings struct 
+#include "Stats.h"     // stats struct
 #include "WordList.h"  // for the dictionary & running word list
+
 
 class GamePlay : public GameState
 {
@@ -25,11 +28,15 @@ class GamePlay : public GameState
 
   // data
   int score;
-  WordList * dictionary;
+  WordList & dictionary;
+  Settings& settings;
+  Stats& stats;
+  sf::Text* boardTxt;
+  sf::RectangleShape* boardSquares;
   WordList words;
   Board board;
 
-  sf::Text* boardTxt;
+  
 
   sf::String inputStr;
   sf::Text inputTxt;
@@ -41,7 +48,8 @@ class GamePlay : public GameState
   int GetWords(std::string const& line);
   int GetScore(std::string const& word);
 public:
-  GamePlay(WordList* dictionary);
+  GamePlay(WordList & dictionary, Settings & settings, Stats & stats);
+  ~GamePlay();
   virtual void Initialize();
   virtual void Update();
   virtual void Draw();

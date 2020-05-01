@@ -116,7 +116,7 @@ int main()
         break;
       case GameState::State::GamePlay:
 #if !DEBUG
-        level = new GamePlay(&dictionary);
+        level = new GamePlay(dictionary, settings, stats);
 #endif
         break;
       case GameState::State::Rules:
