@@ -12,7 +12,9 @@ Description: A simplistic game of boggle using SFML graphics library.
 
 class Rules : public GameState
 {
+  std::vector<sf::Text> rulesTxt;
 public:
+  Rules();
   virtual void Initialize();
   virtual void Update();
   virtual void Draw();

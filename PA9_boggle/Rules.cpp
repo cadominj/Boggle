@@ -8,56 +8,64 @@ Description: A simplistic game of boggle using SFML graphics library.
 #include "Button.h"          // button
 #include "Rules.h"
 #include <SFML/Graphics.hpp> // Text
+#include <vector>            // vector for rulesTxt
 
 namespace
 {
-  int const btnTextSize = 30;
+  int const btnTextSize = 30, const rulesSize = 20;
   float const btnOutlineWidth = 2.0f;
   sf::Text titleTxt, returnTxt;
   Button returnBtn;
 }
 
+Rules::Rules(): rulesTxt(std::vector<sf::Text>()){}
+
 void Rules::Initialize()
 {
-
-  /*
-  The rules of boggle:
-  - 4 x 4 square of pseudo randomized letters
-  - (traditionally at least 2 players or more, but we should probably make it single-player)
-  - goal is to get highest total points
-  - player makes words from the assorment of random letters by stringing
-    together a series of adjacent letters.
-    (sequential letters in the player's words have to be next to each other
-    vertically, horizontally, or diagonally)
-  - (traditionally the players have a time limit for making words, we could
-    keep this or let them have as long as they choose, or have some way of
-    deciding when the game is over)
-  - scoring (in general: more letters = more points)
-    number of letters: 3 | 4 | 5 | 6 | 7 | 8+
-    points per word:   1 | 1 | 2 | 3 | 5 | 11
-    (we could change the point system)
-  - multiple meanings of the same word are not counted as individual words and
-    do not earn more points ("lead" as in the verb meaning to guide is not
-    counted as a different word from "lead" as in the noun meaning the metal
-    / Pb element on the periodic table)
-  - variations of spelling a word (even if it does not change the meaning) are
-    counted as individual words ("run", "runs", and "running" are different words)
-  - the cube Qu is counted as 2 letters
-    (could change this if the programming gets too weird;
-    we could alternatively change Qu to just be Q, since we don't have the limitation
-    of using six sided dice; though it would be ideal to have a U neighbor in
-    the case that a Q is placed)
-*/
-
   titleTxt = sf::Text("RULES", font, 45);
 
   returnBtn.SetButton("RETURN", font, btnTextSize, sf::Color::White, sf::Color::Transparent, sf::Color::White, btnOutlineWidth);
   returnBtn.SetHover(sf::Color::Black, sf::Color::White, sf::Color::White);
 
-  float midX = window->getSize().x / 2;
+  // Initializing the Rules
+  rulesTxt.push_back(sf::Text("- The board is a 4 x 4 square of pseudo randomized letters.", font, rulesSize));
+  rulesTxt.push_back(sf::Text("", font, rulesSize));
+  rulesTxt.push_back(sf::Text("- The goal is to get the highest score possible.", font, rulesSize));
+  rulesTxt.push_back(sf::Text("", font, rulesSize));
+  rulesTxt.push_back(sf::Text("- The game is played until the player decides to end it (either by clicking EXIT or pressing the escape key).", font, rulesSize));
+  rulesTxt.push_back(sf::Text("", font, rulesSize));
+  rulesTxt.push_back(sf::Text("- Make words from the assortment of random letters by stringing together a series of adjacent letters.", font, rulesSize));
+  rulesTxt.push_back(sf::Text("", font, rulesSize));
+  rulesTxt.push_back(sf::Text("- Multiple words and be put on one line if separated by spaces.", font, rulesSize));
+  rulesTxt.push_back(sf::Text("", font, rulesSize));
+  rulesTxt.push_back(sf::Text("- Send typed words in to be scored by pressing the enter/return key.", font, rulesSize));
+  rulesTxt.push_back(sf::Text("", font, rulesSize));
+  rulesTxt.push_back(sf::Text("- Scoring varies a bit from traditional Boggle.", font, rulesSize));
+  rulesTxt.push_back(sf::Text("  Here, the score for the word = number of letters in word + bonus for longer words.", font, rulesSize));
+  rulesTxt.push_back(sf::Text("  number of letters: 3 | 4 | 5 | 6 | 7 | 8+", font, rulesSize));
+  rulesTxt.push_back(sf::Text("  bonus per word:    1 | 1 | 2 | 3 | 5 | 11", font, rulesSize));
+  rulesTxt.push_back(sf::Text("", font, rulesSize));
+  rulesTxt.push_back(sf::Text("- Multiple meanings of the same word are not counted as individual words and do not earn more points.", font, rulesSize));
+  rulesTxt.push_back(sf::Text("  \"lead\" (to guide) is considered the same as \"lead\" (Pb element on the periodic table).", font, rulesSize));
+  rulesTxt.push_back(sf::Text("", font, rulesSize));
+  rulesTxt.push_back(sf::Text("- Variations of spelling a word, even if it does not change the meaning, are counted as individual words.", font, rulesSize));
+  rulesTxt.push_back(sf::Text("  \"run\", \"runs\", and \"running\" are considered different words.", font, rulesSize));
+  rulesTxt.push_back(sf::Text("  \"color\" and \"colour\" are considered different words.", font, rulesSize));
 
+
+
+
+  // Positioning
+  float midX = window->getSize().x / 2;
   titleTxt.setPosition(midX - titleTxt.getGlobalBounds().width / 2, window->getSize().y / 6 - titleTxt.getGlobalBounds().height / 2);
-  returnBtn.Position({ midX - returnBtn.GetGlobalBounds().width / 2.0f, window->getSize().y -  window->getSize().y / 6.0f });
+  returnBtn.Position({ midX - returnBtn.GetGlobalBounds().width / 2.0f, window->getSize().y - window->getSize().y / 6.0f });
+
+  float offsetY = rulesTxt[0].getGlobalBounds().height;
+  float maxSize = 100.0f * rulesTxt[0].getGlobalBounds().width / rulesTxt[0].getString().getSize();
+  sf::Vector2f pos({ midX - maxSize / 2, window->getSize().y / 3.0f }); // starting position
+  int i = 0;
+  for (std::vector<sf::Text>::iterator it = rulesTxt.begin(); it != rulesTxt.end(); ++it)
+    it->setPosition(pos.x, pos.y + offsetY * i++ );
 }
 
 void Rules::Update()
@@ -84,5 +92,7 @@ void Rules::Draw()
 {
   window->draw(titleTxt);
   returnBtn.DrawTo(*window);
+  for (std::vector<sf::Text>::iterator it = rulesTxt.begin(); it != rulesTxt.end(); ++it)
+    window->draw(*it);
 }
 

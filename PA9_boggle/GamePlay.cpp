@@ -272,13 +272,6 @@ int GamePlay::GetWords(std::string const& line)
       wordsTxt.push_back(sf::Text(word,font,20));
     }
   }
-  ////////////////////////////////// DEBUG
-  if (lineScore)
-    std::cout
-      << "\n/// UPDATED WORD LIST ///\n"
-      << words
-      << "/////////////////////////\n";
-  ////////////////////////////////// DEBUG
   switch (valid)
   {
   case Validity::VALID:

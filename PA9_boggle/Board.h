@@ -16,6 +16,7 @@ Description: A simplistic game of boggle using SFML graphics library.
 
 class Board
 {
+protected: // protected for testing
   // data
   char** board;
   int colSize;
