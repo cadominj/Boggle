@@ -1,7 +1,5 @@
 # PA9 Boggle
 Authors: Ava Stromme, Kristen Blue, Sarah Janzen </br>
-Class: CPT_S 122 </br>
-Assignment: PA9 </br>
 Date: 4/30/2020 </br>
 Description: A simplistic game of Boggle using SFML graphics library.
 
